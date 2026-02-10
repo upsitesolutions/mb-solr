@@ -48,7 +48,8 @@
 
 # this is my custom build, and i need to make sure to be logged in to docker hub
 docker buildx build \
+  --no-cache \
   --platform linux/amd64,linux/arm64 \
-  -t upsitesolutions/mb-solr:custom16 \
+  -t upsitesolutions/mb-solr:custom17 \
   . \
   --push
