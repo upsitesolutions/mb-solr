@@ -75,6 +75,9 @@
                 <xml-element java-attribute="video" nillable="true">
                     <xml-java-type-adapter value="org.musicbrainz.search.solrwriter.moxy.BooleanStringAdapter"/>
                 </xml-element>
+                <xml-element java-attribute="isMajor" nillable="true">
+                    <xml-java-type-adapter value="org.musicbrainz.search.solrwriter.moxy.BooleanStringAdapter"/>
+                </xml-element>
                 <xml-element java-attribute="tagList" xml-path="."/>
                 <xml-element java-attribute="puidList" xml-path="."/>
                 <xml-element java-attribute="releaseList" xml-path="."/>
