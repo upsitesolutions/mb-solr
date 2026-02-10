@@ -50,6 +50,6 @@
 docker buildx build \
   --no-cache \
   --platform linux/amd64,linux/arm64 \
-  -t upsitesolutions/mb-solr:custom17 \
+  -t upsitesolutions/mb-solr:custom18 \
   . \
   --push

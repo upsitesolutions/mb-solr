@@ -88,7 +88,7 @@ ARG VCS_REF
 LABEL org.label-schema.build-date="${BUILD_DATE}" \
       org.label-schema.schema-version="1.0.0-rc1" \
       org.label-schema.vcs-ref="${VCS_REF}" \
-      org.label-schema.vcs-url="https://github.com/metabrainz/mb-solr.git" \
+      org.label-schema.vcs-url="https://github.com/upsitesolutions/mb-solr.git" \
       org.label-schema.vendor="MetaBrainz Foundation" \
       org.metabrainz.based-on-image="${SOLR_NAME}:${SOLR_TAG}" \
       org.metabrainz.builder-image="maven:${MAVEN_TAG}" \
