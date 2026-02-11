@@ -16,7 +16,7 @@ echo "Executing $0"
 MAIN_DIR="/usr/lib/mbsssss"
 SOLR_BASE_URL="http://${SOLR_LOCAL_HOST:-localhost}:${SOLR_PORT:-8983}"
 UPLOAD_URL="$SOLR_BASE_URL/api/cluster/configs"
-COLLECTIONS_URL="$SOLR_BASE_URL/admin/collections"
+COLLECTIONS_URL="$SOLR_BASE_URL/solr/admin/collections"
 
 # Directories to ignore (space-separated)
 EXCLUDE_DIRS="lib common _template"
