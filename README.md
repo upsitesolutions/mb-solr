@@ -197,3 +197,6 @@ delete-indexed-documents
 ```
 
 Each of these commands is self-documented through the option `--help`.
+
+
+<!-- adding a test line here -->
