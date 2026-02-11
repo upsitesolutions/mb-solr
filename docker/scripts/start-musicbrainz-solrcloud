@@ -37,6 +37,7 @@ fi
 source run-initdb
 
 if [[ -f $SOLR_HOME/musicbrainz-solrcloud-first-run ]]; then
+    echo "First run detected. Initializing collections..."
     start-local-solrcloud
 
     create-musicbrainz-collections
@@ -44,6 +45,18 @@ if [[ -f $SOLR_HOME/musicbrainz-solrcloud-first-run ]]; then
     stop-local-solr
 
     rm "$SOLR_HOME/musicbrainz-solrcloud-first-run"
+else
+    # NEW: Logic to update schema on subsequent runs
+    echo "Existing installation detected. Checking for schema updates..."
+    
+    # We must start Solr momentarily to interact with the API
+    start-local-solrcloud
+
+    # Run the reload script to push new configs and reload cores
+    # Ensure this script is executable and in the path or referencing the correct location
+    reload-collections
+
+    stop-local-solr
 fi
 
 exec solr-fg --cloud "$@"

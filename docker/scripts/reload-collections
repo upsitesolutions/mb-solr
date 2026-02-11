@@ -1,0 +1,78 @@
+#!/bin/bash
+
+# Copyright (c) 2025 MetaBrainz Foundation
+# Licensed under the Apache License, Version 2.0
+
+# This script updates existing configsets and reloads collections
+# It assumes:
+# - Solr is running (started via start-local-solrcloud)
+# - The collections already exist
+
+set -euo pipefail
+
+echo "Executing $0"
+
+# Configuration
+MAIN_DIR="/usr/lib/mbsssss"
+SOLR_BASE_URL="http://${SOLR_LOCAL_HOST:-localhost}:${SOLR_PORT:-8983}"
+UPLOAD_URL="$SOLR_BASE_URL/api/cluster/configs"
+COLLECTIONS_URL="$SOLR_BASE_URL/admin/collections"
+
+# Directories to ignore (space-separated)
+EXCLUDE_DIRS="lib common _template"
+
+# Check if main directory exists
+if [ ! -d "$MAIN_DIR" ]; then
+    echo "Error: Config directory $MAIN_DIR not found."
+    exit 1
+fi
+
+cd "$MAIN_DIR"
+
+# Loop through all zip files in the directory
+# These zips are created in the Dockerfile build process
+for ZIP_FILE in *.zip; do
+    # Check if file exists to avoid errors if dir is empty
+    [ -e "$ZIP_FILE" ] || continue
+
+    # Extract collection name from zip filename (e.g., "recording.zip" -> "recording")
+    COLLECTION_NAME="${ZIP_FILE%.zip}"
+
+    # --- EXCLUSION CHECK START ---
+    # Check if this collection is in the exclude list
+    SKIP=false
+    for EXCLUDE in $EXCLUDE_DIRS; do
+        if [[ "$COLLECTION_NAME" == "$EXCLUDE" ]]; then
+            SKIP=true
+            break
+        fi
+    done
+    
+    if [[ "$SKIP" == "true" ]]; then
+        echo "Skipping excluded directory: $COLLECTION_NAME"
+        continue
+    fi
+    # --- EXCLUSION CHECK END ---
+    
+    echo "------------------------------------------------"
+    echo "Processing schema update for: $COLLECTION_NAME"
+
+    # 1. Upload the ConfigSet (PUT overwrites existing config in ZK)
+    # We use -f to fail on HTTP errors
+    echo "Uploading configset from $ZIP_FILE..."
+    curl -f -sS -X PUT \
+        --header "Content-Type: application/octet-stream" \
+        --data-binary @"$ZIP_FILE" \
+        "$UPLOAD_URL/$COLLECTION_NAME"
+    
+    echo "Config upload successful."
+
+    # 2. Reload the Collection
+    echo "Reloading collection $COLLECTION_NAME..."
+    curl -f -sS "$COLLECTIONS_URL?action=RELOAD&name=$COLLECTION_NAME"
+    
+    echo -e "\nCollection reload successful."
+done
+
+echo "------------------------------------------------"
+echo "All collections updated and reloaded."
